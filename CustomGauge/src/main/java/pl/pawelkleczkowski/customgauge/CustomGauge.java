@@ -42,6 +42,7 @@ public class CustomGauge extends View {
         super(context);
         init();
     }
+
     public CustomGauge(Context context, AttributeSet attrs) {
         super(context, attrs);
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.CustomGauge, 0, 0);
@@ -108,18 +109,17 @@ public class CustomGauge extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         float padding = getStrokeWidth();
-        float size = getWidth()<getHeight() ? getWidth() : getHeight();
-        float width = size - (2*padding);
-        float height = size - (2*padding);
+        float size = getWidth() < getHeight() ? getWidth() : getHeight();
+        float width = size - (2 * padding);
+        float height = size - (2 * padding);
 //        float radius = (width > height ? width/2 : height/2);
-        float radius = (width < height ? width/2 : height/2);
+        float radius = (width < height ? width / 2 : height / 2);
 
 
-
-        float rectLeft = (getWidth() - (2*padding))/2 - radius + padding;
-        float rectTop = (getHeight() - (2*padding))/2 - radius + padding;
-        float rectRight = (getWidth() - (2*padding))/2 - radius + padding + width;
-        float rectBottom = (getHeight() - (2*padding))/2 - radius + padding + height;
+        float rectLeft = (getWidth() - (2 * padding)) / 2 - radius + padding;
+        float rectTop = (getHeight() - (2 * padding)) / 2 - radius + padding;
+        float rectRight = (getWidth() - (2 * padding)) / 2 - radius + padding + width;
+        float rectBottom = (getHeight() - (2 * padding)) / 2 - radius + padding + height;
 
         mRect.set(rectLeft, rectTop, rectRight, rectBottom);
 
@@ -128,16 +128,14 @@ public class CustomGauge extends View {
         canvas.drawArc(mRect, mStartAngle, mSweepAngle, false, mPaint);
         mPaint.setColor(mPointStartColor);
         mPaint.setShader(new LinearGradient(getWidth(), getHeight(), 0, 0, mPointEndColor, mPointStartColor, Shader.TileMode.CLAMP));
-        if (mPointSize>0) {//if size of pointer is defined
-            if (mPoint > mStartAngle + mPointSize/2) {
-                canvas.drawArc(mRect, mPoint - mPointSize/2, mPointSize, false, mPaint);
-            }
-            else { //to avoid excedding start/zero point
+        if (mPointSize > 0) {//if size of pointer is defined
+            if (mPoint > mStartAngle + mPointSize / 2) {
+                canvas.drawArc(mRect, mPoint - mPointSize / 2, mPointSize, false, mPaint);
+            } else { //to avoid excedding start/zero point
                 canvas.drawArc(mRect, mPoint, mPointSize, false, mPaint);
             }
-        }
-        else { //draw from start point to value point (long pointer)
-            if (mValue==mStartValue) //use non-zero default value for start point (to avoid lack of pointer for start/zero value)
+        } else { //draw from start point to value point (long pointer)
+            if (mValue == mStartValue) //use non-zero default value for start point (to avoid lack of pointer for start/zero value)
                 canvas.drawArc(mRect, mStartAngle, DEFAULT_LONG_POINTER_SIZE, false, mPaint);
             else
                 canvas.drawArc(mRect, mStartAngle, mPoint - mStartAngle, false, mPaint);
@@ -149,7 +147,7 @@ public class CustomGauge extends View {
             int i = mDividerDrawFirst ? 0 : 1;
             int max = mDividerDrawLast ? mDividersCount + 1 : mDividersCount;
             for (; i < max; i++) {
-                canvas.drawArc(mRect, mStartAngle + i* mDividerStepAngle, mDividerSize, false, mPaint);
+                canvas.drawArc(mRect, mStartAngle + i * mDividerStepAngle, mDividerSize, false, mPaint);
             }
         }
 
@@ -157,7 +155,7 @@ public class CustomGauge extends View {
 
     public void setValue(int value) {
         mValue = value;
-        mPoint = (int) (mStartAngle + (mValue-mStartValue) * mPointAngle);
+        mPoint = (int) (mStartAngle + (mValue - mStartValue) * mPointAngle);
         invalidate();
     }
 
@@ -217,6 +215,8 @@ public class CustomGauge extends View {
 
     public void setStartValue(int startValue) {
         mStartValue = startValue;
+        mPointAngle = ((double) Math.abs(mSweepAngle) / (mEndValue - mStartValue));
+        invalidate();
     }
 
     @SuppressWarnings("unused")
